@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useUser } from '../utils/UserContext'
 import { Link } from "react-router-dom";
 import { Divider } from '@chakra-ui/react'
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { IoPersonCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -81,23 +81,19 @@ function SignUp() {
     const handleSignUpWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
+            const user = result.user
 
-            
-            await setDoc(doc(db, "users", user.uid), {
-                username: user.displayName || "User",
-                profileImage: user.photoURL || null,
-                email: user.email,
-            });
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                setUser({
+                    uid: user.uid,
+                    email: user.email,
+                    username: userDoc.data().username,
+                    profileImage: userDoc.data().profileImage,
+                });
+            }
 
-            setUser({
-                uid: user.uid,
-                email: user.email,
-                username: user.displayName || "User",
-                profileImage: user.photoURL || null,
-            });
-
-            console.log("Google User signed up and data saved:", user);
+            console.log("Google User Data: ", user);
             navigate('/');
         } catch (error) {
             console.error("Error with Google login: ", error.message);

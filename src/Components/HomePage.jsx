@@ -2,6 +2,7 @@ import { useState } from "react";
 import { connectWallet } from "../utils/connectWallet";
 import { ethers } from "ethers";
 import Navbar from "../utils/Navbar";
+import Test from "../utils/Test";
 
 function HomePage() {
     
@@ -26,6 +27,7 @@ function HomePage() {
     return (
     <div className="h-screen bg-[url('../wallpaper.jpg')] text-white cursor-default">
     <Navbar />
+    <Test />
 
     {/* <div>
         <h2>Create a Job</h2>

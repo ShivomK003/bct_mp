@@ -48,8 +48,23 @@ const Navbar = () => {
         });
     };
 
+    const [windowLoc, setWindowLoc] = useState(window.location.pathname)
+    useEffect(() => {
+        setWindowLoc(window.location.pathname)
+    }, [window])
+
+    
+    const [userProfile, setUserProfile] = useState(null)
+    useEffect(() => {
+        if(user) {
+            setUserProfile(user.profile)
+        } else {
+            setUserProfile(null)
+        }
+    }, [user])
+
     return (
-        <div className="w-screen h-20 flex justify-between items-center font-medium text-xl shadow-2xl">
+        <div className="w-screen flex justify-between items-center font-medium text-xl shadow-2xl fixed z-10 bg-gradient-to-r from-[#110f8a] to-[#1e70de]">
             <div className="flex items-center">
                 {user ? (
                     user.profileImage && !imageError ? (
@@ -63,14 +78,22 @@ const Navbar = () => {
                         <IoPersonCircle className="ml-6 w-10 h-10 text-gray-400 mr-3" />
                     )
                 ) : null}
-                <h1 className="p-3 text-3xl">TrustWork</h1>
+                <div>
+                    <Link to='/'>
+                        <h1 className="p-3 text-3xl">TrustWork</h1>
+                    </Link>
+                </div>
+                
             </div>
             <div className="navbar flex h-20">
-                <Link className="p-3 px-3 hover:bg-black/40 content-center" to={user ? '/profile' : '/login'}>
-                    <div>
-                        Join as a Freelancer Today!
-                    </div>
-                </Link>
+                {
+                    windowLoc != "/profile" && !userProfile &&
+                    <Link className="p-3 px-3 hover:bg-black/40 content-center" to={user ? '/profile' : '/login'}>
+                        <div>
+                            Join as a Freelancer Today!
+                        </div>
+                    </Link>
+                }
                 {user ? (
                     <>
                         {walletAddress ?  

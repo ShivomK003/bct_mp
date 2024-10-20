@@ -4,44 +4,51 @@ import {
   Textarea,
   Button,
   VStack,
+  Stack,
   FormControl,
   FormLabel,
   Box,
+  Radio, 
+  RadioGroup
 } from "@chakra-ui/react";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 import { useUser } from "../utils/UserContext";
 import DynamicServiceSelect from "../utils/DynamicServiceSelect"; // Assuming you have this component
 import Navbar from "../utils/Navbar";
 import { useState, useEffect } from "react";
-import { IoPersonCircle } from "react-icons/io5";
 import { doc, setDoc } from "firebase/firestore"; // Updated to use setDoc
 import { db, storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 function JobProfile() {
   const { user, setUser } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     jobTitle: "",
-    technical: "NT",
     jobDescription: "",
-    github: "",
+    githubAccount: "",
     bio: "",
     country: "",
     state: "",
     services: [],
   });
   const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [hasGithub, setHasGitHub] = useState("0")
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const updateImage = async () => {
-      const storageRef = ref(storage, `profileImages/${user.uid}`);
-      await uploadBytes(storageRef, user.profileImage);
-      const imageUrl = await getDownloadURL(storageRef);
-      setUser((prevUser) => ({
-        ...prevUser,
-        profileImage: imageUrl,
-      }));
+      if(user) {
+        const storageRef = ref(storage, `profileImages/${user.uid}`);
+        await uploadBytes(storageRef, user.profileImage);
+        const imageUrl = await getDownloadURL(storageRef);
+        setUser((prevUser) => ({
+          ...prevUser,
+          profileImage: imageUrl,
+        }));
+      }
     };
     updateImage();
   }, [profileImagePreview]);
@@ -68,16 +75,31 @@ function JobProfile() {
     const profileDocRef = doc(db, "profiles", user.uid);
     try {
       await setDoc(profileDocRef, formData);
+
+      setUser(
+        prevData => ({
+          ...prevData, profile: formData
+        })
+      );
+
       alert("Profile updated successfully!");
+      navigate('/')
     } catch (error) {
       console.error("Error updating profile: ", error);
     }
   };
 
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData])
+
+
   return (
     <div className="bg-[url('../wallpaper.jpg')] bg-repeat text-white cursor-default">
       <Navbar />
-      <div className="w-3/4 bg-white text-black mx-auto m-10 -mb-10 pb-10 p-5 flex flex-col items-center justify-center">
+      <div className="h-28"></div>
+      <div className="w-1/3 bg-white text-black mx-auto p-11 flex flex-col items-center justify-center">
         <h1 className="text-4xl font-medium text-center">Profile</h1>
         <form onSubmit={handleSubmit}>
           <VStack spacing={4} align="stretch" width="full">
@@ -90,6 +112,7 @@ function JobProfile() {
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, name: e.target.value }))
                 }
+                width={"96"}
               />
             </FormControl>
 
@@ -104,45 +127,39 @@ function JobProfile() {
               >
                 <option value="Web Developer">Web Developer</option>
                 <option value="Graphic Designer">Graphic Designer</option>
-                <option value="Social Media Specialist">
-                  Social Media Specialist
-                </option>
+                <option value="Social Media Specialist">Social Media Specialist</option>
                 <option value="Accountant">Accountant</option>
                 <option value="Videographer">Videographer</option>
                 <option value="Editor">Editor</option>
                 <option value="Musician">Musician</option>
                 <option value="Content Writer">Content Writer</option>
-                <option value="Software Developer (T)">
-                  Software Developer (T)
-                </option>
+                <option value="Software Developer">Software Developer</option>
                 <option value="Tutor">Tutor</option>
                 <option value="Other">Other</option>
               </Select>
             </FormControl>
 
             <FormControl>
-              <FormLabel>Technical or Non-Technical Background</FormLabel>
-              <Select
-                placeholder="Select background"
-                value={formData.technical}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, technical: e.target.value }))
-                }
-              >
-                <option value="T">Technical</option>
-                <option value="NT">Non-Technical</option>
-              </Select>
+              <FormLabel>Do you use GitHub?</FormLabel>
+              <RadioGroup 
+              value={hasGithub}
+              onChange={setHasGitHub}>
+                <Stack direction='row'>
+                  <Radio value="1">Yes</Radio>
+                  <Radio value="0">No</Radio>
+                </Stack>
+              </RadioGroup>
             </FormControl>
 
-            {formData.technical === "T" && (
+            {hasGithub === "1" && (
               <FormControl>
                 <FormLabel>GitHub Linking</FormLabel>
                 <Input
                   size="lg"
                   placeholder="GitHub link"
-                  value={formData.github}
+                  value={formData.githubAccount}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, github: e.target.value }))
+                    setFormData((prev) => ({ ...prev, githubAccount: e.target.value }))
                   }
                 />
               </FormControl>
@@ -172,6 +189,13 @@ function JobProfile() {
                 }
               />
             </FormControl>
+
+            <DynamicServiceSelect
+              services={formData.services}
+              setServices={(updatedServices) =>
+                setFormData((prev) => ({ ...prev, services: updatedServices }))
+              }
+            />
 
             <FormControl>
               <FormLabel>Country Based In</FormLabel>
@@ -213,19 +237,13 @@ function JobProfile() {
               </Select>
             </FormControl>
 
-            <DynamicServiceSelect
-              services={formData.services}
-              setServices={(services) =>
-                setFormData((prev) => ({ ...prev, services }))
-              }
-            />
-
             <Button type="submit" colorScheme="teal" size="lg">
               Save Profile
             </Button>
           </VStack>
-        </form>
+        </form> 
       </div>
+      <div className="h-10"></div>
     </div>
   );
 }
