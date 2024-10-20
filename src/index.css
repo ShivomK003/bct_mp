@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+select option {
+    color: black; /* Sets the text color of the options to black */
+}
