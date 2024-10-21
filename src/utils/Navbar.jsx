@@ -51,6 +51,7 @@ const Navbar = () => {
     const [windowLoc, setWindowLoc] = useState(window.location.pathname)
     useEffect(() => {
         setWindowLoc(window.location.pathname)
+        console.log(user);
     }, [window])
 
     
@@ -64,15 +65,16 @@ const Navbar = () => {
     }, [user])
 
     return (
-        <div className="w-screen flex justify-between items-center font-medium text-xl shadow-2xl fixed z-10 bg-gradient-to-r from-[#110f8a] to-[#1e70de]">
+        <div className="w-screen flex text-white justify-between items-center font-medium text-xl shadow-2xl fixed z-10 bg-gradient-to-r from-[#110f8a] to-[#1e70de]">
             <div className="flex items-center">
                 {user ? (
                     user.profileImage && !imageError ? (
                         <img
                             src={user.profileImage}
                             alt="Profile"
-                            className="w-10 h-10 rounded-full object-cover mr-3"
+                            className="w-10 h-10 rounded-full object-cover ml-5 mr-3"
                             onError={() => setImageError(true)} // Set the error state when image fails
+                            referrerPolicy="no-referrer"
                         />
                     ) : (
                         <IoPersonCircle className="ml-6 w-10 h-10 text-gray-400 mr-3" />

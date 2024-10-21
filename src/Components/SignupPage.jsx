@@ -1,68 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { auth, db, googleProvider, storage } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useUser } from '../utils/UserContext'
 import { Link } from "react-router-dom";
-import { Divider } from '@chakra-ui/react'
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Divider, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
+import { doc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { IoPersonCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-
-function SignUp() {
+function Signup() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [profileImage, setProfileImage] = useState(null);
     const [profileImagePreview, setProfileImagePreview] = useState(null);
+
+
+    const [alertMessage, setAlertMessage] = useState(null);
     const { setUser } = useUser(); 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log({
-            "profileImage": profileImage,
-            "email": email,
-            "username": username,
-            "password": password
-        });
-    }, [profileImage, username, email, password])
 
-
-    //Handle any sign up
-    const handleSignUp = async () => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            const storageRef = ref(storage, `profileImages/${user.uid}`);
-            await uploadBytes(storageRef, profileImage);
-
-            const imageUrl = await getDownloadURL(storageRef);
-
-
-            await setDoc(doc(db, "users", user.uid), {
-                username, 
-                profileImage: imageUrl,
-                email,
-            })
-            
-            setUser({
-                uid: user.uid,
-                email,
-                username,
-                profileImage: imageUrl
-            });
-
-            console.log("User signed up and data saved:", user.uid);
-            navigate('/');
-        } catch (error) {
-            console.error("Error with sign-up: ", error.message);
-        }
-
-    };
-
-    // handle image upload
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         setProfileImage(file);
@@ -77,32 +36,94 @@ function SignUp() {
         }
     };
 
-    // handle google sign up
+
+    const downloadAndUploadProfileImage = async (url, uid) => {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+    
+            const storageRef = ref(storage, `profileImages/${uid}`);
+            await uploadBytes(storageRef, blob);
+    
+            const imageUrl = await getDownloadURL(storageRef);
+            return imageUrl;
+        } catch (error) {
+            console.error('Error downloading and uploading profile image:', error);
+            return null;
+        }
+    };
+    
+
+
+    const handleSignUp = async () => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            const storageRef = ref(storage, `profileImages/${user.uid}`);
+            await uploadBytes(storageRef, profileImage);
+            const imageUrl = await getDownloadURL(storageRef);
+
+            await setDoc(doc(db, "users", user.uid), {
+                username, 
+                profileImage: imageUrl,
+                email,
+            });
+
+            setUser({
+                uid: user.uid,
+                email,
+                username,
+                profileImage: imageUrl
+            });
+
+            setAlertMessage({ type: 'success', message: 'Sign-up successful!' });
+            navigate('/');
+        } catch (error) {
+            console.error("Error with sign-up: ", error.message);
+            setAlertMessage({ type: 'error', message: 'Error signing up. Please try again.' });
+        }
+    };
+
     const handleSignUpWithGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user
+            const res_user = result.user;
 
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (userDoc.exists()) {
-                setUser({
-                    uid: user.uid,
-                    email: user.email,
-                    username: userDoc.data().username,
-                    profileImage: userDoc.data().profileImage,
-                });
-            }
+            const profileImageUrl = await downloadAndUploadProfileImage(res_user.photoURL, res_user.uid);
 
-            console.log("Google User Data: ", user);
+            await setDoc(doc(db, "users", res_user.uid), {
+                username: res_user.displayName,
+                profileImage: profileImageUrl,
+                email: res_user.email,
+            });
+
+
+            setUser({
+                uid: res_user.uid,
+                email: res_user.email,
+                username: res_user.displayName,
+                profileImage: res_user.photoURL,
+            });
+
+            setAlertMessage({ type: 'success', message: 'Google sign-up successful!' });
             navigate('/');
         } catch (error) {
             console.error("Error with Google login: ", error.message);
+            setAlertMessage({ type: 'error', message: 'Error with Google sign-up. Please try again.' });
         }
     };
 
     return (
         <div className="h-screen bg-[url('../wallpaper.jpg')] text-white cursor-default">
             <h1 className="text-5xl font-medium text-center p-9"><Link to="/" className="cursor-pointer">TrustWork</Link></h1>
+            {alertMessage && (
+                <Alert status={alertMessage.type} mb={4}>
+                    <AlertIcon />
+                    <AlertTitle>{alertMessage.type === 'success' ? 'Success' : 'Error'}</AlertTitle>
+                    <AlertDescription>{alertMessage.message}</AlertDescription>
+                </Alert>
+            )}
             <div className=" flex flex-col items-center justify-center bg-black/30 h-4/5 w-2/5 mx-auto">
                 <h2 className=" text-3xl font-medium mb-4">SignUp</h2>
                     <div className="flex flex-col w-full items-center">
@@ -170,4 +191,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default Signup;

@@ -2,49 +2,25 @@ import { useState } from "react";
 import { connectWallet } from "../utils/connectWallet";
 import { ethers } from "ethers";
 import Navbar from "../utils/Navbar";
-import Test from "../utils/Test";
+import SearchBar from "../utils/SearchBar";
+import ProfileDisplay from "../utils/ProfileDisplay";
 
 function HomePage() {
-    
-    const [jobDescription, setJobDescription] = useState("")
-    const [jobBudget, setJobBudget] = useState("")
-
-
-
-
-    const handleCreateJob = async () => {
-        if(!provider) return;
-        const contract = getContract(provider);
-        try {
-            const tx = await contract.createJob(jobDescription, ethers.utils.parseEther(jobBudget));
-            await tx.wait();
-            alert("Job created Successfully");
-        } catch (error) {
-            console.error("Job creation error: ", error);
-        }
-    };
-
     return (
-    <div className="h-screen bg-[url('../wallpaper.jpg')] text-white cursor-default">
-    <Navbar />
-    <Test />
-
-    {/* <div>
-        <h2>Create a Job</h2>
-        <input
-        type="text"
-        placeholder="Job Description"
-        value={jobDescription}
-        onChange={(e) => setJobDescription(e.target.value)}
-        />
-        <input
-        type="text"
-        placeholder="Budget in ETH"
-        value={jobBudget}
-        onChange={(e) => setJobBudget(e.target.value)}
-        />
-        <button onClick={handleCreateJob}>Create Job</button>
-    </div> */}
+    <div>
+        <Navbar />
+        <div className="h-full bg-[url('../wallpaper.jpg')] text-white cursor-default">
+            <div className="text-4xl h-screen content-center justify-items-center text-center grid">
+                <pre className="m-6">
+                    Hire Freelancers using<br></br>
+                    Our Decentralised Platform Today!
+                </pre>
+                <SearchBar />
+            </div>  
+        </div>
+        <div className="h-screen text-black cursor-default">
+            <ProfileDisplay />
+        </div>
     </div>
     )
 }

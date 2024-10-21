@@ -16,7 +16,12 @@ export const UserProvider = ({ children }) => {
                 // Fetch user data from Firestore
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const unsubscribeSnapshot = onSnapshot(userDocRef, (doc) => {
-                    setUser({ uid: currentUser.uid, ...doc.data() });
+                    if (doc.exists()) {
+                        setUser({ uid: currentUser.uid, ...doc.data() });
+                    } else {
+                        console.warn("User document does not exist");
+                        setUser(null);
+                    }
                 });
 
                 return () => unsubscribeSnapshot(); // Clean up listener
