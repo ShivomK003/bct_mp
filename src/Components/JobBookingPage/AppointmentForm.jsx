@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FormControl, Input, Button } from '@chakra-ui/react';
 import './AppointmentForm.css'; // Import the CSS file
 
 const AppointmentForm = () => {

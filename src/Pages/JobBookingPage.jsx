@@ -1,26 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../utils/Navbar';
 import AppointmentForm from '../Components/JobBookingPage/AppointmentForm';
-import './styles.css'; // Import the CSS file here
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import './styles.css'; 
+import { useLocation } from 'react-router-dom'; 
+import { useUser } from '../utils/UserContext';
 
 const JobBookingPage = () => {
-  const location = useLocation(); // Get the current location
-  const { name, jobTitle } = location.state || {}; // Destructure name and jobTitle from state
+    const { user, setUser } = useUser();
+
+    useEffect(() => {
+        console.log(user);
+    }, [user])
 
   return (
     <div>
         <div>
             <Navbar />
         </div>
-        <br />
-        <br />
-        <br />
         <div className="bg-cover bg-[url('../wallpaper.jpg')] text-white cursor-default min-h-screen">
             <div className="text-4xl content-center justify-items-center text-center grid p-6">
+                <div className='h-24'></div>
+                {user ? 
                 <pre>
-                    Hire <b><u>{name}</u></b> for <b><u>{jobTitle}</u></b> here!
-                </pre>
+                    Hire <b><u>{user.profile.name}</u></b> as a <b><u>{user.profile.jobTitle}</u></b> here!
+                </pre> :
+                <pre></pre>}
                 <AppointmentForm />
             </div>
         </div>
