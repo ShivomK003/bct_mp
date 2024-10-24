@@ -1,0 +1,9 @@
+.bg-cover {
+    background-size: cover;
+    background-attachment: fixed; /* Optional, for a parallax effect */
+  }
+  
+  .min-h-screen {
+    min-height: 100vh; /* Ensures the minimum height is the viewport height */
+  }
+  

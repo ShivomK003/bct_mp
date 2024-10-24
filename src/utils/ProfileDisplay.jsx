@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../firebaseConfig"; // Adjust the path as needed
 import { collection, getDocs } from "firebase/firestore";
 import { IoPersonCircle } from "react-icons/io5"; 
@@ -6,6 +7,7 @@ import { Card, CardHeader, CardBody, CardFooter, Text, Image, Flex, Box } from "
 
 function ProfileDisplay() {
     const [profiles, setProfiles] = useState([]);
+    const navigate = useNavigate(); // Initialising useNavigate
 
     useEffect(() => {
         const fetchProfiles = async () => {
@@ -17,6 +19,12 @@ function ProfileDisplay() {
         
         fetchProfiles();
     }, []);
+
+    // To navigate to JobBookingPage
+    const handleProfileClick = (name, jobTitle) => {
+        // Navigate to JobBookingPage with the profile name and job title as state
+        navigate('/booking', { state: { name, jobTitle } });
+    };
 
     return (
         <div className="flex flex-wrap justify-center p-4">
@@ -34,7 +42,15 @@ function ProfileDisplay() {
                             <IoPersonCircle className="w-20 h-auto text-gray-400" />
                             }
                         </Box>
-                        <Text fontSize="xl" fontWeight="bold" textColor={"white"}>{profile.name}</Text>
+                        <Text 
+                            fontSize="xl" 
+                            fontWeight="bold" 
+                            textColor={"white"} 
+                            onClick={() => handleProfileClick(profile.name, profile.jobTitle)} // Add onClick to name
+                            cursor="pointer" // Change cursor to pointer for clickable text
+                        >
+                            {profile.name}
+                        </Text>
                         <Text fontSize="lg" color="gray.500" textColor={"white"}>{profile.jobTitle}</Text>
                     </CardHeader>
                     <CardBody>
