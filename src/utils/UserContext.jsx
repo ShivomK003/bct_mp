@@ -17,7 +17,7 @@ export const UserProvider = ({ children }) => {
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const unsubscribeSnapshot = onSnapshot(userDocRef, (doc) => {
                     if (doc.exists()) {
-                        setUser({ uid: currentUser.uid, ...doc.data() });
+                        setUser({ id: currentUser.uid, ...doc.data() });
                     } else {
                         console.warn("User document does not exist");
                         setUser(null);

@@ -21,19 +21,18 @@ function ProfileDisplay() {
         fetchProfiles();
     }, []);
 
+    useEffect(() => {
+        console.log(profiles);
+    }, [profiles])
 
-    const handleProfileClick = (name, jobTitle) => {
-        navigate('/booking', { state: { name, jobTitle } });
-    };
-    
     return (
         <div className="flex flex-wrap justify-center p-4">
             {profiles.map((profile, index) => (
-                <Link to={"/booking"}>
-                    <Card key={index} width="15rem" m={4} borderRadius="lg" overflow="hidden"> {/* Wider card */}
+                <Link key={index} to={`/display/${profile.id}`}>
+                    <Card width="15rem" m={4} borderRadius="lg" overflow="hidden"> {/* Wider card */}
                         <CardHeader bg="#1524bd" py={4} textAlign="center"> {/* Replace 'yourCustomColor' with actual color */}
                             <Box display="flex" justifyContent="center">
-                                {profile.profileImage ?<Image 
+                                {profile.profileImage ? <Image 
                                     borderRadius="full" 
                                     boxSize="10rem"
                                     src={profile.profileImage} 
@@ -47,7 +46,6 @@ function ProfileDisplay() {
                                 fontSize="xl" 
                                 fontWeight="bold" 
                                 textColor={"white"} 
-                                onClick={() => handleProfileClick(profile.name, profile.jobTitle)} // Add onClick to name
                                 cursor="pointer" // Change cursor to pointer for clickable text
                             >
                                 {profile.name}

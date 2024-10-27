@@ -1,15 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Alert, AlertTitle, AlertIcon, AlertDescription } from "@chakra-ui/react";
 import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { db } from "../firebaseConfig";
+import { doc, addDoc, getDoc, collection } from "firebase/firestore";
+import { useUser } from "./UserContext";
 
-const DynamicServiceSelect = ({ services=[], setServices }) => {
-  const [service, setService] = useState({ title: "", description: "", price: "" });
+const DynamicServiceSelect = () => {
+  const { user } = useUser();
+  const [service, setService] = useState({ title: "", description: "", price: ""});
+  const [alertMessage, setAlertMessage] = useState(null); 
 
-  const handleAddService = () => {
-    if (service.title && service.description && service.price) {
-      setServices([...services, service]);
-      setService({ title: "", description: "", price: "" }); // Reset the input fields
+  const handleAddService = async () => {
+    if (!user || !user.id) {
+      setAlertMessage({ status: 'error', title: "User Error: ", description: 'User not logged in or missing ID.' });
+      return;
     }
-  };
+    try {
+      const profileDocRef = doc(db, "profiles", user.id)
+      const serviceCollectionRef = collection(profileDocRef, "services")
+      const serviceDocRef = await addDoc(serviceCollectionRef, service)
+      
+      setAlertMessage({ status: 'success', title: "Success: ", description: 'Login successful!' });
+      console.log("Service Added to Database");
+    } catch (error) {
+      setAlertMessage({ status: 'error', title: "Error: ", description: error.message});
+      console.error("Error", error);
+    }
+  }
+  
+  useEffect(() => {
+    console.log(user);
+  }, [user])  
+
 
   return (
     <div>
@@ -38,7 +60,16 @@ const DynamicServiceSelect = ({ services=[], setServices }) => {
           Add Service
         </Button>
       </FormControl>
-      {service.length > 0 && <p className="text-lg">Service {service.length} is added</p>}
+      {alertMessage && (
+        <Alert status={alertMessage.status} mb={4} textColor={"black"}>
+            <AlertIcon />
+            <AlertTitle>{alertMessage.title}</AlertTitle>
+            <AlertDescription>{alertMessage.description}</AlertDescription>
+        </Alert>
+      )}
+      {/* <pre>
+        {service.title + " " + service.description + " " + service.price}
+      </pre> */}
     </div>
   );
 };

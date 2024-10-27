@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useUser } from '../utils/UserContext'
 import { Link } from "react-router-dom";
 import { Divider, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { IoPersonCircle } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -57,6 +57,14 @@ function Signup() {
 
     const handleSignUp = async () => {
         try {
+            
+
+            if (signInMethods.length > 0) {
+                console.error('Email is already in use. Please log in.');
+                setAlertMessage({ type: 'error', message: 'Email is already in use. Please log in.' });
+                return;
+            }
+
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
@@ -115,17 +123,17 @@ function Signup() {
     };
 
     return (
-        <div className="h-screen bg-[url('../wallpaper.jpg')] text-white cursor-default">
+        <div className="h-full bg-[url('../wallpaper.jpg')] text-white cursor-default">
             <h1 className="text-5xl font-medium text-center p-9"><Link to="/" className="cursor-pointer">TrustWork</Link></h1>
             {alertMessage && (
-                <Alert status={alertMessage.type} mb={4}>
+                <Alert status={alertMessage.type} mb={4} textColor={"black"}>
                     <AlertIcon />
                     <AlertTitle>{alertMessage.type === 'success' ? 'Success' : 'Error'}</AlertTitle>
                     <AlertDescription>{alertMessage.message}</AlertDescription>
                 </Alert>
             )}
             <div className=" flex flex-col items-center justify-center bg-black/30 h-4/5 w-2/5 mx-auto">
-                <h2 className=" text-3xl font-medium mb-4">SignUp</h2>
+                <h2 className=" text-3xl font-medium mb-4 p-5 text-white">SignUp</h2>
                     <div className="flex flex-col w-full items-center">
                         <div className="relative mb-4">
                             <input
@@ -184,9 +192,10 @@ function Signup() {
                         >
                             Sign Up with Google
                         </button>
-                        <p className="mt-4">Have an Account? <Link to='/login' className="underlined hover:text-blue-500 ">Log In here!</Link></p>
+                        <p className="mt-4 pb-10">Have an Account? <Link to='/login' className="underlined hover:text-blue-500 ">Log In here!</Link></p>
                 </div>
             </div>
+            <div className="h-10"></div>
         </div>
     );
 }

@@ -23,8 +23,9 @@ import { doc, setDoc } from "firebase/firestore"; // Updated to use setDoc
 import { db, storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import { IoPersonCircle } from "react-icons/io5";
 
-function JobProfile() {
+function JobProfileForm() {
   const { user, setUser } = useUser();
   const [formData, setFormData] = useState({
     name: "",
@@ -34,10 +35,10 @@ function JobProfile() {
     bio: "",
     country: "",
     state: "",
-    services: [],
   });
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [hasGithub, setHasGitHub] = useState("0");
+  const [imageError, setImageError] = useState(false)
 
   const navigate = useNavigate();
 
@@ -58,7 +59,7 @@ function JobProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const profileDocRef = doc(db, "profiles", user.uid);
+    const profileDocRef = doc(db, "profiles", user.id);
     try {
       await setDoc(profileDocRef, formData);
 
@@ -74,7 +75,7 @@ function JobProfile() {
     }
   };
 
-  
+
   return (
     <div>
       <Navbar />
@@ -84,17 +85,23 @@ function JobProfile() {
           <h1 className="text-4xl font-medium text-center">Profile</h1>
 
           {/* Display the profile image */}
-          {user.profileImage && (
+          {user ? user.profileImage ? (
             <Box mb={4}>
               <Image
                 borderRadius="full"
                 boxSize="100px" // Adjust size as needed
                 src={user.profileImage}
                 alt="Profile Image"
+                onError={() => setImageError(true)}
                 objectFit="cover"
               />
             </Box>
-          )}
+            ) : (
+            <Box mb={4}>
+              <IoPersonCircle className="ml-6 w-10 h-10 text-gray-400 mr-3" />
+            </Box> 
+            ) : null
+          }
 
           <form onSubmit={handleSubmit}>
             <VStack spacing={4} align="stretch" width="full">
@@ -179,12 +186,7 @@ function JobProfile() {
                   }
                 />
               </FormControl>
-              <DynamicServiceSelect
-                services={formData.services}
-                setServices={(updatedServices) =>
-                  setFormData((prev) => ({ ...prev, services: updatedServices }))
-                }
-              />
+              <DynamicServiceSelect />
               <FormControl>
                 <FormLabel>Country Based In</FormLabel>
                 <Select
@@ -235,4 +237,4 @@ function JobProfile() {
   );
 }
 
-export default JobProfile;
+export default JobProfileForm;

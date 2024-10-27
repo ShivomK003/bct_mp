@@ -51,7 +51,6 @@ const Navbar = () => {
     const [windowLoc, setWindowLoc] = useState(window.location.pathname)
     useEffect(() => {
         setWindowLoc(window.location.pathname)
-        console.log(user);
     }, [window])
 
     

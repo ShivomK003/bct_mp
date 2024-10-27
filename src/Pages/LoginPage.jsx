@@ -111,7 +111,7 @@ function Login() {
                 </Alert>
             )}
             <div className="flex flex-col items-center justify-center bg-black/30 h-3/5 w-2/5 mx-auto">
-                <h2 className=" text-3xl font-medium mb-5">Login</h2>
+                <h2 className=" text-3xl font-medium mb-5 text-white">Login</h2>
                 <div className="flex flex-col w-full items-center">
                     <input 
                         type="email"
