@@ -52,8 +52,3 @@
     cursor: pointer;
     font-size: 0.9rem; /* Reduce button font size */
   }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  

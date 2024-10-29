@@ -15,7 +15,7 @@ function App() {
         <Route path="/profile" element={<JobProfileForm />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/display/:id" element={<JobDisplay />} />
-        <Route path="/booking" element={<JobBookingPage />} />
+        <Route path="/booking/:profileId" element={<JobBookingPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import Navbar from '../utils/Navbar';
 import AppointmentForm from '../Components/JobBookingPage/AppointmentForm';
 import './styles.css'; 
-import { useLocation } from 'react-router-dom'; 
+import { useLocation, useParams } from 'react-router-dom'; 
 import { useUser } from '../utils/UserContext';
 
 const JobBookingPage = () => {
     const { user, setUser } = useUser();
+    const { id } = useParams();
 
     useEffect(() => {
         console.log(user);
@@ -22,7 +23,7 @@ const JobBookingPage = () => {
                 <div className='h-24'></div>
                 {user ? 
                 <pre>
-                    Hire <b><u>{user.profile.name}</u></b> as a <b><u>{user.profile.jobTitle}</u></b> here!
+                    {/* Hire <b><u>{user.profile.name}</u></b> as a <b><u>{user.profile.jobTitle}</u></b> here! */}
                 </pre> :
                 <pre></pre>}
                 <AppointmentForm />

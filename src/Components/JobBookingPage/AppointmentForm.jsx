@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormControl, Input, Button } from '@chakra-ui/react';
-import './AppointmentForm.css'; // Import the CSS file
+import './AppointmentForm.css';
 
 const AppointmentForm = () => {
   const [date, setDate] = useState('');
@@ -20,26 +20,26 @@ const AppointmentForm = () => {
     <div className="appointment-form-container">
       <h2>Book an Appointment</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <FormControl className="form-group">
           <label>Choose a Date: </label>
-          <input
+          <Input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
+        </FormControl>
+        <FormControl className="form-group">
           <label>Number of Hours per day: </label>
-          <input
+          <Input
             type="number"
             value={hoursPerDay}
             onChange={(e) => setHoursPerDay(parseInt(e.target.value))}
             required
             min="1"
           />
-        </div>
-        <div className="form-group">
+        </FormControl>
+        <FormControl className="form-group">
           <label>Number of Days: </label>
           <input
             type="number"
@@ -48,8 +48,8 @@ const AppointmentForm = () => {
             required
             min="1"
           />
-        </div>
-        <button type="submit">Book Appointment</button>
+        </FormControl>
+        <Button type="submit" colorScheme='blue'>Book Appointment</Button>
       </form>
     </div>
   );
