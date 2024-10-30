@@ -74,27 +74,31 @@ function ProfileDisplayPage() {
                                 <td className="align-middle">{profileData.jobTitle}</td>
                             </tr>
                             <tr className="h-4">
-                                <td className="font-bold align-middle w-[30%] p-10">Services</td>
-                                <td className="align-middle">
-                                    {services && services.map((service, index) => (
-                                        <div key={index}>
-                                            <span className="font-bold">{service.title}</span><br />
-                                            {service.description}<br />
-                                            {service.price} <br />
-                                        </div>
-                                    ))}
-                                </td>
-                            </tr>
-                            <tr className="h-4">
                                 <td className="font-bold align-middle w-[30%] p-10">Location</td>
                                 <td className="align-middle">
                                     {State.getStateByCodeAndCountry(profileData.state, profileData.country)?.name}, 
                                     {Country.getCountryByCode(profileData.country)?.name}
                                 </td>
                             </tr>
+                            <tr className="h-4">
+                                <td className="font-bold align-middle w-[30%] p-10">Services</td>
+                                <td className="align-middle">
+                                    {services && services.map((service, index) => (
+                                        <div key={index} className="flex text-start">
+                                            <div>
+                                                <span className="font-bold">Title: </span>{service.title}<br />
+                                                <span className="font-bold">Description: </span>{service.description}<br />
+                                                <span className="font-bold">Pricing: </span>{service.price}/hr <br />
+                                            </div>
+                                            <Button colorScheme='blue' w="50%" mx="auto" alignSelf="center" onClick={() => {navigate(`/booking/${id}/${index}`, {state: {pricePerHour: service.price}})}}>Hire this service</Button>
+                                        </div>
+                                    ))}
+                                </td>
+                            </tr>
+                            
                         </tbody>
                     </table>
-                    <Button colorScheme='blue' onClick={() => {navigate(`/booking/${id}`)}}>Hire this freelancer</Button>
+                    
                 </div>
             ) : (
                 <div>Profile not found</div>

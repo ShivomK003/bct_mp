@@ -1,8 +1,6 @@
-// useFreelancerBooking.js
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
-// Replace with your contract’s ABI and deployed address
 const contractABI =[
 	{
 		"anonymous": false,

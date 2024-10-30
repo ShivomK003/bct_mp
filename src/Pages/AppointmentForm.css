@@ -32,8 +32,8 @@
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 0.9rem; /* Reduce input font size */
-    color: black; /* Set input text color to black */
+    font-size: 0.9rem;
+    color: black; 
   }
   
   /* Set placeholder text color to black */

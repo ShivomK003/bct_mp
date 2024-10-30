@@ -50,7 +50,7 @@ const DynamicServiceSelect = () => {
           my={2}
         />
         <Input
-          placeholder="Service Price"
+          placeholder="Price/hr in your rupees"
           type="number"
           value={service.price}
           onChange={(e) => setService({ ...service, price: e.target.value })}
